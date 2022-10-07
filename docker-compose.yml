@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+  backend:
+    container_name: backend
+    restart: always
+    build:
+      context: backend
+    volumes:
+      - ./backend/:/backend/
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - ./backend/.env
+    networks:
+      - fastapi-postgres
+    depends_on:
+      - postgres
+    ports:
+      - 8000:8000
+    
+  postgres:
+    image: postgres:13.3-alpine
+    container_name: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+    env_file:
+      - ./backend/.env
+    networks:
+      - fastapi-postgres
+
+volumes:
+  db:
+
+networks:
+  fastapi-postgres:
